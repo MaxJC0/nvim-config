@@ -12,7 +12,6 @@ return {
         css = { 'stylelint' },
         html = { 'htmlhint' },
         json = { 'jsonlint' },
-        markdown = { 'markdownlint' },
         dockerfile = { 'hadolint' },
         terraform = { 'tflint' },
       }
