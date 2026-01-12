@@ -18,7 +18,14 @@ return {
       window = {
         mappings = {
           ['\\'] = 'close_window',
+          ['<Tab>'] = 'set_root',
         },
+      },
+    },
+    window = {
+      mappings = {
+        ['l'] = 'open',
+        ['h'] = 'close_node',
       },
     },
   },
