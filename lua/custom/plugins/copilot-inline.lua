@@ -8,6 +8,10 @@ return {
         suggestion = { enabled = true, auto_trigger = true },
         panel = { enabled = false },
       }
+
+      vim.keymap.set('i', '<C-l>', function()
+        require('copilot.suggestion').accept()
+      end, { desc = 'Accept Copilot suggestion', silent = true })
     end,
   },
 
