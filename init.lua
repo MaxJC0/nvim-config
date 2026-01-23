@@ -212,6 +212,9 @@ vim.opt.tabstop = 2 -- how tabs are displayed
 vim.opt.softtabstop = 2 -- tab key inserts 2 spaces
 vim.opt.list = false -- hide >> and · markers
 
+-- <K> opens hover lsp information
+vim.keymap.set('n', '<K>', vim.lsp.buf.hover, { silent = true, desc = 'LSP Hover Information' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
