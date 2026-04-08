@@ -3,8 +3,6 @@ return {
   lazy = false,
   dependencies = {
     'nvim-treesitter/nvim-treesitter',
-    -- 'L3MON4D3/LuaSnip', -- Falls du LuaSnip für Snippets nutzt
-    -- 'hrsh7th/nvim-cmp', -- Falls du nvim-cmp für Autocompletion nutzt
   },
   config = function()
     require('tabout').setup {
