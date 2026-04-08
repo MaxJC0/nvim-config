@@ -21,7 +21,7 @@ return {
         { open = '(', close = ')' },
         { open = '[', close = ']' },
         { open = '{', close = '}' },
-        { open = '<', close = '>' }, -- Sehr wichtig für Vue Tags!
+        { open = '<', close = '>' },
       },
       ignore_beginning = true, -- Springt nicht, wenn du am Zeilenanfang stehst
       exclude = {}, -- Dateitypen, die ignoriert werden sollen
