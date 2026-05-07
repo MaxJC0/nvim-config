@@ -691,8 +691,35 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
-        --
+        ts_ls = {
+          -- Wir verschieben die Pfad-Logik hier hinein, um Fehler beim Start zu vermeiden
+          on_new_config = function(new_config, new_root_dir)
+            local status_ok, mason_registry = pcall(require, 'mason-registry')
+            if status_ok and mason_registry.is_installed 'vue-language-server' then
+              local vue_lsp_path = mason_registry.get_package('vue-language-server'):get_install_path() .. '/node_modules/@vue/language-server'
+
+              new_config.init_options.plugins[1].location = vue_lsp_path
+            end
+          end,
+          init_options = {
+            plugins = {
+              {
+                name = '@vue/typescript-plugin',
+                location = '',
+                languages = { 'vue' },
+              },
+            },
+          },
+          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+        },
+        vue_ls = {
+          init_options = {
+            vue = {
+              -- Falls der Fehler bleibt, schalte den Hybrid Mode hier aus:
+              hybridMode = false,
+            },
+          },
+        },
 
         lua_ls = {
           -- cmd = { ... },
