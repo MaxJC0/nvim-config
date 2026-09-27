@@ -118,6 +118,24 @@ vim.schedule(function()
   vim.o.clipboard = 'unnamedplus'
 end)
 
+-- Over SSH (or on any headless Linux box, e.g. `pct enter`) there's no X/Wayland
+-- clipboard, so copy via OSC 52 (the terminal puts it on your local clipboard).
+-- Paste from nvim's own register instead of reading the clipboard over OSC 52,
+-- which kitty blocks/prompts for.
+-- To paste from your local clipboard, use the terminal's paste (ctrl+shift+v / cmd+v).
+local headless = vim.fn.has 'mac' == 0 and not vim.env.DISPLAY and not vim.env.WAYLAND_DISPLAY
+if vim.env.SSH_TTY or headless then
+  local osc52 = require 'vim.ui.clipboard.osc52'
+  local function paste()
+    return { vim.fn.split(vim.fn.getreg '', '\n'), vim.fn.getregtype '' }
+  end
+  vim.g.clipboard = {
+    name = 'OSC 52',
+    copy = { ['+'] = osc52.copy '+', ['*'] = osc52.copy '*' },
+    paste = { ['+'] = paste, ['*'] = paste },
+  }
+end
+
 -- Enable break indent
 vim.o.breakindent = true
 
