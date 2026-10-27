@@ -57,7 +57,16 @@ return {
           -- avoid superfluous noise, notably within the handy LSP pop-ups that
           -- describe the hovered symbol using Markdown.
           if vim.bo.modifiable then
-            lint.try_lint()
+            -- Skip linters that aren't installed on this machine instead of erroring
+            local names = vim.tbl_filter(function(name)
+              local linter = lint.linters[name]
+              local cmd = type(linter) == 'table' and linter.cmd or name
+              if type(cmd) == 'function' then
+                cmd = cmd()
+              end
+              return vim.fn.executable(cmd) == 1
+            end, lint.linters_by_ft[vim.bo.filetype] or {})
+            lint.try_lint(names)
           end
         end,
       })

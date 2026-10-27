@@ -194,6 +194,31 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- Run the current file (C++: compile & run, Python: run with python3)
+local run_buf
+vim.keymap.set('n', '<leader>r', function()
+  local src = vim.fn.shellescape(vim.fn.expand '%:p')
+  local cmd
+  if vim.bo.filetype == 'cpp' then
+    local bin = vim.fn.shellescape(vim.fn.expand '%:p:r')
+    cmd = 'g++ -std=c++23 -Wall -Wextra -g ' .. src .. ' -o ' .. bin .. ' && ' .. bin
+  elseif vim.bo.filetype == 'python' then
+    cmd = 'python3 ' .. src
+  else
+    vim.notify('No run command for filetype: ' .. vim.bo.filetype, vim.log.levels.WARN)
+    return
+  end
+  -- close the previous run's terminal instead of stacking a new one
+  if run_buf and vim.api.nvim_buf_is_valid(run_buf) then
+    vim.api.nvim_buf_delete(run_buf, { force = true })
+  end
+  vim.cmd 'write'
+  vim.cmd 'botright 15split'
+  vim.cmd('terminal ' .. cmd)
+  run_buf = vim.api.nvim_get_current_buf()
+  vim.cmd 'startinsert'
+end, { desc = '[R]un current file (C++/Python)' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -699,7 +724,7 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
+        clangd = {},
         -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
@@ -823,6 +848,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        cpp = { 'clang-format' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -1002,6 +1028,7 @@ require('lazy').setup({
       ensure_installed = {
         'bash',
         'c',
+        'cpp',
         'diff',
         'html',
         'lua',
